@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git ls-tree -r HEAD)",
+      "WebFetch(domain:shopify.dev)"
+    ]
+  }
+}
