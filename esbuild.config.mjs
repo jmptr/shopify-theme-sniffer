@@ -60,14 +60,15 @@ const iifeConfig = {
   entryPoints: [
     resolve(__dirname, 'src/background.ts'),
     resolve(__dirname, 'src/content.ts'),
+    resolve(__dirname, 'src/detect.ts'),
   ],
   outdir: resolve(__dirname, 'dist'),
   format: 'iife',
   plugins: [copyPlugin],
 };
 
-// ESM bundles (popup, dashboard, logs)
-const esmConfig = {
+// IIFE bundles (popup, dashboard, logs)
+const pageConfig = {
   ...commonOptions,
   entryPoints: [
     resolve(__dirname, 'src/popup/popup.ts'),
@@ -76,19 +77,19 @@ const esmConfig = {
   ],
   outdir: resolve(__dirname, 'dist'),
   outbase: resolve(__dirname, 'src'),
-  format: 'esm',
+  format: 'iife',
 };
 
 async function main() {
   if (isWatch) {
     const iifeCtx = await esbuild.context(iifeConfig);
-    const esmCtx = await esbuild.context(esmConfig);
+    const esmCtx = await esbuild.context(pageConfig);
     await Promise.all([iifeCtx.watch(), esmCtx.watch()]);
     console.log('[esbuild] Watching for changes...');
   } else {
     await Promise.all([
       esbuild.build(iifeConfig),
-      esbuild.build(esmConfig),
+      esbuild.build(pageConfig),
     ]);
     console.log('[esbuild] Build complete.');
   }

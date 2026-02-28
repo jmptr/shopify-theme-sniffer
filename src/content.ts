@@ -2,28 +2,7 @@
 import type { ShopifyDetectedMessage, ShopifyNotDetectedMessage } from './types';
 
 function detectShopify(): void {
-  // Inject a script into the main world to read window.Shopify.shop
-  const script = document.createElement('script');
-  script.textContent = `
-    (function() {
-      try {
-        const shop = window.Shopify && window.Shopify.shop;
-        window.postMessage({
-          type: '__SNIFFER_SHOPIFY_DETECT__',
-          shop: typeof shop === 'string' && shop.length > 0 ? shop : null
-        }, '*');
-      } catch(e) {
-        window.postMessage({
-          type: '__SNIFFER_SHOPIFY_DETECT__',
-          shop: null
-        }, '*');
-      }
-    })();
-  `;
-  document.documentElement.appendChild(script);
-  script.remove();
-
-  // Listen for the result from the injected script
+  // Listen for the result from the MAIN-world detect script
   window.addEventListener('message', function handler(event: MessageEvent) {
     if (event.source !== window) return;
     if (event.data?.type !== '__SNIFFER_SHOPIFY_DETECT__') return;

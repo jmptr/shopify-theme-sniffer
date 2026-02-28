@@ -110,7 +110,7 @@ export interface ProductVariant {
   sku: string;
   price: string;
   compare_at_price: string | null;
-  inventory_policy: string;
+  inventory_policy: string | null;
   weight: number | null;
   weight_unit: string | null;
   option1: string | null;

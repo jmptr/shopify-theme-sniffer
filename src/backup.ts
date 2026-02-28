@@ -32,7 +32,6 @@ interface GqlVariantNode {
   sku: string;
   price: GqlMoney;
   compareAtPrice: GqlMoney | null;
-  inventoryPolicy: string;
   weight: number | null;
   weightUnit: string | null;
   selectedOptions: GqlSelectedOption[];
@@ -66,7 +65,6 @@ interface GqlPageInfo {
 
 interface GqlProductsData {
   products: {
-    totalCount: number;
     pageInfo: GqlPageInfo;
     nodes: GqlProductNode[];
   };
@@ -89,7 +87,6 @@ interface GqlResponse {
 const PRODUCTS_QUERY = `
 query getProducts($cursor: String) {
   products(first: 250, after: $cursor) {
-    totalCount
     pageInfo { hasNextPage endCursor }
     nodes {
       id title handle descriptionHtml vendor productType tags createdAt updatedAt
@@ -99,7 +96,7 @@ query getProducts($cursor: String) {
           id title sku
           price { amount currencyCode }
           compareAtPrice { amount currencyCode }
-          inventoryPolicy weight weightUnit
+          weight weightUnit
           selectedOptions { name value }
         }
       }
@@ -149,7 +146,7 @@ export function transformProduct(
     sku: v.sku,
     price: v.price.amount,
     compare_at_price: v.compareAtPrice?.amount ?? null,
-    inventory_policy: v.inventoryPolicy,
+    inventory_policy: null,
     weight: v.weight,
     weight_unit: v.weightUnit,
     option1: v.selectedOptions[0]?.value ?? null,
@@ -328,10 +325,6 @@ export class BackupEngine {
 
         const productsData = gqlResponse.data.products;
 
-        // On first page, store totalCount
-        if (cursor.cursor === null) {
-          cursor.total_products = productsData.totalCount;
-        }
 
         // 3f. Transform and upsert products
         const products = productsData.nodes.map((node) =>
