@@ -5,7 +5,9 @@
       "WebFetch(domain:shopify.dev)",
       "Bash(npm install)",
       "Bash(npm run build)",
-      "Bash(npx tsc --noEmit)"
+      "Bash(npx tsc --noEmit)",
+      "Bash(git -C /c/Users/jm/Documents/GitHub/shopify-theme-sniffer log --oneline --all)",
+      "Bash(wc -l /c/Users/jm/Documents/GitHub/shopify-theme-sniffer/src/**/*.ts)"
     ]
   }
 }

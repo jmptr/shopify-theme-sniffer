@@ -31,6 +31,11 @@ function copyStaticFiles() {
   cpSync(resolve(src, 'logs/logs.html'), resolve(dist, 'logs/logs.html'));
   cpSync(resolve(src, 'logs/logs.css'), resolve(dist, 'logs/logs.css'));
 
+  // products
+  mkdirSync(resolve(dist, 'products'), { recursive: true });
+  cpSync(resolve(src, 'products/products.html'), resolve(dist, 'products/products.html'));
+  cpSync(resolve(src, 'products/products.css'), resolve(dist, 'products/products.css'));
+
   // icons (copy entire directory)
   cpSync(resolve(src, 'icons'), resolve(dist, 'icons'), { recursive: true });
 }
@@ -74,6 +79,7 @@ const pageConfig = {
     resolve(__dirname, 'src/popup/popup.ts'),
     resolve(__dirname, 'src/dashboard/dashboard.ts'),
     resolve(__dirname, 'src/logs/logs.ts'),
+    resolve(__dirname, 'src/products/products.ts'),
   ],
   outdir: resolve(__dirname, 'dist'),
   outbase: resolve(__dirname, 'src'),

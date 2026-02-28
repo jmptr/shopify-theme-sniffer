@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": ["edit"]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/update-claude-md.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

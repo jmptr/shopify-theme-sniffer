@@ -187,7 +187,7 @@ function renderStorefrontRow(sf: Storefront): string {
 
   return `<tr data-storefront-id="${escapeAttr(sf.id)}">
     <td>${escapeHtml(sf.domain)}</td>
-    <td>${sf.product_count}</td>
+    <td><a href="../products/products.html?storefront=${encodeURIComponent(sf.id)}" style="color:#0066cc;text-decoration:none;">${sf.product_count}</a></td>
     <td>${badge}</td>
     <td title="${escapeAttr(absTime)}">${escapeHtml(relTime)}</td>
     <td>${escapeHtml(size)}</td>
