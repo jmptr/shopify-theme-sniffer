@@ -13,8 +13,6 @@ const statusClasses: Record<BackupStatus, string> = {
 
 export function StatusBadge({ status }: { status: BackupStatus }) {
   return (
-    <Badge className={cn('font-semibold', statusClasses[status])}>
-      {statusLabel(status)}
-    </Badge>
+    <Badge className={cn('font-semibold', statusClasses[status])}>{statusLabel(status)}</Badge>
   );
 }

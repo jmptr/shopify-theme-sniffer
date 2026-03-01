@@ -4,7 +4,14 @@ import * as ReactDOM from 'react-dom/client';
 import { getAllStorefronts, deleteStorefront, getProductsByStorefront } from '../db';
 import type { Storefront, Product, BackupStatus } from '../types';
 import { formatRelativeTime, formatAbsoluteTime, formatBytes } from '../lib/format';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../components/ui/table';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from '../components/ui/table';
 import { Button } from '../components/ui/button';
 import {
   AlertDialog,
@@ -85,12 +92,14 @@ function sortStorefronts(data: Storefront[], sortState: SortState): Storefront[]
 
 async function exportStorefront(
   sf: Storefront,
-  getProducts: (id: string) => Promise<Product[]>,
+  getProducts: (id: string) => Promise<Product[]>
 ): Promise<void> {
   const products = await getProducts(sf.id);
 
   const sanitizedProducts = products.map((p: Product) => {
     const { storefront_id: _sfId, sniffer_updated_at: _sniffed, ...rest } = p;
+    void _sfId;
+    void _sniffed;
     return rest;
   });
 
@@ -131,7 +140,10 @@ async function exportStorefront(
 
 function DashboardApp() {
   const [storefronts, setStorefronts] = useState<Storefront[]>([]);
-  const [sortState, setSortState] = useState<SortState>({ column: 'last_backup', direction: 'desc' });
+  const [sortState, setSortState] = useState<SortState>({
+    column: 'last_backup',
+    direction: 'desc',
+  });
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -141,18 +153,18 @@ function DashboardApp() {
   const handleSort = useCallback((column: string) => {
     setSortState((prev) => {
       if (prev.column === column) {
-        return { column: column as SortColumn, direction: prev.direction === 'asc' ? 'desc' : 'asc' };
+        return {
+          column: column as SortColumn,
+          direction: prev.direction === 'asc' ? 'desc' : 'asc',
+        };
       }
       return { column: column as SortColumn, direction: 'asc' };
     });
   }, []);
 
-  const handleExport = useCallback(
-    (sf: Storefront) => {
-      void exportStorefront(sf, getProductsByStorefront);
-    },
-    [],
-  );
+  const handleExport = useCallback((sf: Storefront) => {
+    void exportStorefront(sf, getProductsByStorefront);
+  }, []);
 
   const handleDelete = useCallback(async (id: string) => {
     try {

@@ -1,7 +1,13 @@
 // Service worker for Shopify Theme Sniffer
 
 import { setupMessageListener, broadcastProgress } from './messaging';
-import { startBackup, pauseBackup, resumeBackup, cancelBackup, checkForInterruptedBackups } from './backup';
+import {
+  startBackup,
+  pauseBackup,
+  resumeBackup,
+  cancelBackup,
+  checkForInterruptedBackups,
+} from './backup';
 import { maybePruneLogs, setupAlarmListener } from './lifecycle';
 
 // Wire up message handler with backup callbacks

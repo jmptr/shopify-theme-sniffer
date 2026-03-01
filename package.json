@@ -5,7 +5,10 @@
   "scripts": {
     "build": "node esbuild.config.mjs",
     "watch": "node esbuild.config.mjs --watch",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\""
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.15",
@@ -16,6 +19,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@tanstack/react-virtual": "^3.13.19",
     "clsx": "^2.1.1",
+    "eslint-plugin-tailwind-v4": "^1.1.1",
     "idb": "^8.0.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
@@ -26,10 +30,17 @@
     "@types/chrome": "^0.0.287",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
     "autoprefixer": "^10.4.27",
     "esbuild": "^0.24.0",
+    "eslint": "^9.0.0",
+    "eslint-plugin-react": "^7.34.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "globals": "^15.0.0",
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",
+    "prettier": "^3.3.0",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.7.0"
   }

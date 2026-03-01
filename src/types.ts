@@ -88,7 +88,7 @@ export type ExtensionMessage =
 export type BackupStatus = 'complete' | 'partial' | 'in-progress' | 'paused' | 'never';
 
 export interface Storefront {
-  id: string;                  // window.Shopify.shop value
+  id: string; // window.Shopify.shop value
   domain: string;
   last_backup_at: string | null;
   backup_status: BackupStatus;
@@ -119,7 +119,7 @@ export interface ProductVariant {
 }
 
 export interface Product {
-  id: string;                  // `{storefront_id}::{shopify_product_id}`
+  id: string; // `{storefront_id}::{shopify_product_id}`
   storefront_id: string;
   shopify_id: string;
   title: string;
@@ -137,7 +137,7 @@ export interface Product {
 }
 
 export interface BackupCursor {
-  storefront_id: string;       // PK
+  storefront_id: string; // PK
   cursor: string | null;
   started_at: string;
   products_fetched: number;
@@ -147,7 +147,7 @@ export interface BackupCursor {
 export type LogLevel = 'info' | 'warn' | 'error';
 
 export interface LogEntry {
-  id?: number;                 // auto-increment
+  id?: number; // auto-increment
   storefront_id: string;
   timestamp: string;
   level: LogLevel;

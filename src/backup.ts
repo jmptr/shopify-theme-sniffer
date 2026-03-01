@@ -1,4 +1,4 @@
-import type { Product, ProductImage, ProductVariant, Storefront, BackupCursor } from './types';
+import type { Product, ProductImage, ProductVariant } from './types';
 import {
   getStorefront,
   putStorefront,
@@ -127,10 +127,7 @@ function extractShopifyId(gid: string): string {
   return parts[parts.length - 1];
 }
 
-export function transformProduct(
-  storefrontId: string,
-  node: GqlProductNode,
-): Product {
+export function transformProduct(storefrontId: string, node: GqlProductNode): Product {
   const shopifyId = extractShopifyId(node.id);
 
   const images: ProductImage[] = node.images.nodes.map((img) => ({
@@ -191,10 +188,7 @@ export class BackupEngine {
   private cancelled: boolean = false;
   private onProgress: (fetched: number, estimated: number) => void;
 
-  constructor(
-    storefrontId: string,
-    onProgress: (fetched: number, estimated: number) => void,
-  ) {
+  constructor(storefrontId: string, onProgress: (fetched: number, estimated: number) => void) {
     this.storefrontId = storefrontId;
     this.onProgress = onProgress;
   }
@@ -302,10 +296,7 @@ export class BackupEngine {
             detail: { body: response.body },
           });
           await this.markPartial();
-          notify(
-            'Backup failed',
-            `Backup stopped for ${sid}: HTTP ${response.status}`,
-          );
+          notify('Backup failed', `Backup stopped for ${sid}: HTTP ${response.status}`);
           return;
         }
 
@@ -325,11 +316,8 @@ export class BackupEngine {
 
         const productsData = gqlResponse.data.products;
 
-
         // 3f. Transform and upsert products
-        const products = productsData.nodes.map((node) =>
-          transformProduct(sid, node),
-        );
+        const products = productsData.nodes.map((node) => transformProduct(sid, node));
         await putProducts(products);
 
         // 3g. Track seen IDs
@@ -345,10 +333,7 @@ export class BackupEngine {
         await putBackupCursor(cursor);
 
         // 3j. Progress callback
-        this.onProgress(
-          cursor.products_fetched,
-          cursor.total_products ?? 0,
-        );
+        this.onProgress(cursor.products_fetched, cursor.total_products ?? 0);
 
         // 3k/l. Check for more pages
         if (productsData.pageInfo.hasNextPage) {
@@ -410,16 +395,13 @@ export class BackupEngine {
         detail: { product_count: productCount, size_bytes: sizeBytes },
       });
 
-      notify(
-        'Backup complete',
-        `Backup complete: ${sid} — ${productCount} products backed up.`,
-      );
+      notify('Backup complete', `Backup complete: ${sid} — ${productCount} products backed up.`);
     } catch (error: unknown) {
       if (error instanceof Error && error.name === 'QuotaExceededError') {
         await this.markPartial();
         notify(
           'Backup stopped',
-          `Backup stopped: Storage quota exceeded for ${sid}. Open the extension to review.`,
+          `Backup stopped: Storage quota exceeded for ${sid}. Open the extension to review.`
         );
         await addLog({
           storefront_id: sid,
@@ -460,7 +442,7 @@ export class BackupEngine {
   // ---------------------------------------------------------------------------
 
   private async fetchPage(
-    cursor: string | null,
+    cursor: string | null
   ): Promise<{ status: number; body: GqlResponse; headers: Headers }> {
     const url = `https://${this.storefrontId}/api/2026-01/graphql.json`;
     const resp = await fetch(url, {
@@ -483,9 +465,7 @@ export class BackupEngine {
   }
 
   private isThrottled(body: GqlResponse): boolean {
-    return (
-      body.errors?.some((e) => e.extensions?.code === 'THROTTLED') ?? false
-    );
+    return body.errors?.some((e) => e.extensions?.code === 'THROTTLED') ?? false;
   }
 
   private async markPartial(): Promise<void> {
@@ -504,7 +484,7 @@ export const activeBackups = new Map<string, BackupEngine>();
 
 export function startBackup(
   storefrontId: string,
-  onProgress: (fetched: number, estimated: number) => void,
+  onProgress: (fetched: number, estimated: number) => void
 ): void {
   const engine = new BackupEngine(storefrontId, onProgress);
   activeBackups.set(storefrontId, engine);
@@ -523,7 +503,7 @@ export function pauseBackup(storefrontId: string): void {
 
 export function resumeBackup(
   storefrontId: string,
-  onProgress: (fetched: number, estimated: number) => void,
+  onProgress: (fetched: number, estimated: number) => void
 ): void {
   let engine = activeBackups.get(storefrontId);
   if (engine) {
@@ -545,7 +525,7 @@ export function cancelBackup(storefrontId: string): void {
 }
 
 export async function checkForInterruptedBackups(
-  onProgress: (storefrontId: string, fetched: number, estimated: number) => void,
+  onProgress: (storefrontId: string, fetched: number, estimated: number) => void
 ): Promise<void> {
   // Import getDb to scan all backup cursors
   const { getDb } = await import('./db');

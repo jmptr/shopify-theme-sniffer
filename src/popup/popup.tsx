@@ -1,10 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom/client';
-import type {
-  PopupStateMessage,
-  BackupProgressMessage,
-  BackupStatus,
-} from '../types';
+import type { PopupStateMessage, BackupProgressMessage } from '../types';
 import { Button } from '../components/ui/button';
 import { Progress } from '../components/ui/progress';
 import { StatusBadge } from '../components/shared/StatusBadge';
@@ -30,9 +26,7 @@ async function requestPersist(): Promise<boolean> {
 function StateA() {
   return (
     <>
-      <p className="text-sm text-gray-500 py-3">
-        No Shopify store detected on this page.
-      </p>
+      <p className="text-sm text-gray-500 py-3">No Shopify store detected on this page.</p>
       <Button
         variant="link"
         className="mt-3 text-xs"
@@ -94,11 +88,7 @@ function StateC({ state }: { state: PopupStateMessage }) {
       <Button className="w-full mt-3" onClick={handlePause}>
         Pause
       </Button>
-      <Button
-        variant="link"
-        className="mt-3 text-xs"
-        onClick={() => openExtPage('logs/logs.html')}
-      >
+      <Button variant="link" className="mt-3 text-xs" onClick={() => openExtPage('logs/logs.html')}>
         View Logs
       </Button>
     </>
@@ -176,11 +166,7 @@ function StateE({ state }: { state: PopupStateMessage }) {
           Cancel
         </Button>
       </div>
-      <Button
-        variant="link"
-        className="mt-3 text-xs"
-        onClick={() => openExtPage('logs/logs.html')}
-      >
+      <Button variant="link" className="mt-3 text-xs" onClick={() => openExtPage('logs/logs.html')}>
         View Logs
       </Button>
     </>
@@ -204,7 +190,7 @@ function PopupApp() {
           if (response) {
             setState(response);
           }
-        },
+        }
       );
     });
 
@@ -256,11 +242,7 @@ function PopupApp() {
     }
   }, [state]);
 
-  return (
-    <div className="w-[380px] p-4">
-      {renderContent()}
-    </div>
-  );
+  return <div className="w-[380px] p-4">{renderContent()}</div>;
 }
 
 // --- Mount ---

@@ -112,10 +112,7 @@ function TagList({ tags }: { tags: string[] }) {
 function DetailRow({ product }: { product: Product }) {
   return (
     <TableRow className="hover:bg-transparent">
-      <TableCell
-        colSpan={7}
-        className="p-0 px-3.5 pb-3.5 bg-gray-50 border-b-2 border-gray-200"
-      >
+      <TableCell colSpan={7} className="p-0 px-3.5 pb-3.5 bg-gray-50 border-b-2 border-gray-200">
         <div className="flex gap-6">
           <div className="flex-1 min-w-0">
             <h3 className="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-2">
@@ -190,18 +187,12 @@ function ProductRow({
             </Badge>
           )}
         </TableCell>
-        <TableCell className={isRemoved ? 'text-gray-400' : ''}>
-          {product.vendor}
-        </TableCell>
-        <TableCell className={isRemoved ? 'text-gray-400' : ''}>
-          {product.product_type}
-        </TableCell>
+        <TableCell className={isRemoved ? 'text-gray-400' : ''}>{product.vendor}</TableCell>
+        <TableCell className={isRemoved ? 'text-gray-400' : ''}>{product.product_type}</TableCell>
         <TableCell className={isRemoved ? 'text-gray-400' : ''}>
           {product.variants.length}
         </TableCell>
-        <TableCell className={isRemoved ? 'text-gray-400' : ''}>
-          {priceRange(product)}
-        </TableCell>
+        <TableCell className={isRemoved ? 'text-gray-400' : ''}>{priceRange(product)}</TableCell>
         <TableCell
           className={isRemoved ? 'text-gray-400' : ''}
           title={formatAbsoluteTime(product.updated_at)}
@@ -269,7 +260,7 @@ function ProductsApp() {
           p.title.toLowerCase().includes(q) ||
           p.vendor.toLowerCase().includes(q) ||
           p.product_type.toLowerCase().includes(q) ||
-          p.tags.some((t) => t.toLowerCase().includes(q)),
+          p.tags.some((t) => t.toLowerCase().includes(q))
       );
     }
 
@@ -333,18 +324,18 @@ function ProductsApp() {
   }, [currentPage, totalPages]);
 
   // Handlers
-  const handleSort = useCallback(
-    (column: string) => {
-      setSortState((prev) => {
-        if (prev.column === column) {
-          return { column: column as SortColumn, direction: prev.direction === 'asc' ? 'desc' : 'asc' };
-        }
-        return { column: column as SortColumn, direction: 'asc' };
-      });
-      setCurrentPage(1);
-    },
-    [],
-  );
+  const handleSort = useCallback((column: string) => {
+    setSortState((prev) => {
+      if (prev.column === column) {
+        return {
+          column: column as SortColumn,
+          direction: prev.direction === 'asc' ? 'desc' : 'asc',
+        };
+      }
+      return { column: column as SortColumn, direction: 'asc' };
+    });
+    setCurrentPage(1);
+  }, []);
 
   const handleToggleExpand = useCallback((id: string) => {
     setExpandedIds((prev) => {
@@ -392,9 +383,7 @@ function ProductsApp() {
           >
             &larr; Dashboard
           </a>
-          <h1 className="text-xl font-semibold text-gray-900">
-            Products &mdash; {domain}
-          </h1>
+          <h1 className="text-xl font-semibold text-gray-900">Products &mdash; {domain}</h1>
         </div>
       </header>
 
@@ -406,10 +395,7 @@ function ProductsApp() {
           onChange={handleSearchChange}
         />
         <label className="flex items-center gap-1.5 text-[13px] text-gray-600 cursor-pointer select-none">
-          <Checkbox
-            checked={showRemoved}
-            onCheckedChange={handleShowRemovedChange}
-          />
+          <Checkbox checked={showRemoved} onCheckedChange={handleShowRemovedChange} />
           Show removed
         </label>
       </div>

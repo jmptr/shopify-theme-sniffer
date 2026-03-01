@@ -85,10 +85,7 @@ export async function getAllStorefronts(): Promise<Storefront[]> {
 export async function deleteStorefront(id: string): Promise<void> {
   const db = await getDb();
 
-  const tx = db.transaction(
-    ['storefronts', 'products', 'backup_cursors', 'logs'],
-    'readwrite',
-  );
+  const tx = db.transaction(['storefronts', 'products', 'backup_cursors', 'logs'], 'readwrite');
 
   // Storefront
   tx.objectStore('storefronts').delete(id);
@@ -146,7 +143,7 @@ export async function getProductCount(storefrontId: string): Promise<number> {
 export async function markProductsRemoved(
   storefrontId: string,
   activeIds: Set<string>,
-  timestamp: string,
+  timestamp: string
 ): Promise<void> {
   const db = await getDb();
   const tx = db.transaction('products', 'readwrite');
@@ -168,9 +165,7 @@ export async function markProductsRemoved(
 // Backup cursor operations
 // ---------------------------------------------------------------------------
 
-export async function getBackupCursor(
-  storefrontId: string,
-): Promise<BackupCursor | undefined> {
+export async function getBackupCursor(storefrontId: string): Promise<BackupCursor | undefined> {
   const db = await getDb();
   return db.get('backup_cursors', storefrontId);
 }

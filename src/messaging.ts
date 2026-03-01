@@ -1,9 +1,4 @@
-import type {
-  ExtensionMessage,
-  PopupStateMessage,
-  BackupStatus,
-  BackupProgress,
-} from './types';
+import type { ExtensionMessage, PopupStateMessage, BackupStatus, BackupProgress } from './types';
 import { getStorefront, getBackupCursor, getProductCount } from './db';
 
 // ---------------------------------------------------------------------------
@@ -58,7 +53,7 @@ export function setupMessageListener(callbacks: MessageCallbacks): void {
     (
       message: ExtensionMessage,
       sender: chrome.runtime.MessageSender,
-      sendResponse: (response: PopupStateMessage) => void,
+      sendResponse: (response: PopupStateMessage) => void
     ): boolean | undefined => {
       switch (message.type) {
         case 'SHOPIFY_DETECTED': {
@@ -71,9 +66,7 @@ export function setupMessageListener(callbacks: MessageCallbacks): void {
             };
             setTabState(tabId, state);
             setBadgeForTab(tabId, true);
-            console.log(
-              `[Sniffer] Shopify detected on ${message.domain} (shop: ${message.shop})`,
-            );
+            console.log(`[Sniffer] Shopify detected on ${message.domain} (shop: ${message.shop})`);
           }
           return undefined;
         }
@@ -121,10 +114,7 @@ export function setupMessageListener(callbacks: MessageCallbacks): void {
             let backupStatus: BackupStatus = storefront?.backup_status ?? 'never';
             let progress: BackupProgress | null = null;
 
-            if (
-              cursor &&
-              (backupStatus === 'in-progress' || backupStatus === 'paused')
-            ) {
+            if (cursor && (backupStatus === 'in-progress' || backupStatus === 'paused')) {
               progress = {
                 fetched: cursor.products_fetched,
                 estimated: cursor.total_products ?? 0,
@@ -170,7 +160,7 @@ export function setupMessageListener(callbacks: MessageCallbacks): void {
         default:
           return undefined;
       }
-    },
+    }
   );
 }
 
@@ -178,17 +168,15 @@ export function setupMessageListener(callbacks: MessageCallbacks): void {
 // Broadcast progress
 // ---------------------------------------------------------------------------
 
-export function broadcastProgress(
-  storefrontId: string,
-  fetched: number,
-  estimated: number,
-): void {
-  chrome.runtime.sendMessage({
-    type: 'BACKUP_PROGRESS',
-    storefront_id: storefrontId,
-    fetched,
-    estimated,
-  }).catch(() => {
-    // No listeners available (popup closed) — safe to ignore
-  });
+export function broadcastProgress(storefrontId: string, fetched: number, estimated: number): void {
+  chrome.runtime
+    .sendMessage({
+      type: 'BACKUP_PROGRESS',
+      storefront_id: storefrontId,
+      fetched,
+      estimated,
+    })
+    .catch(() => {
+      // No listeners available (popup closed) — safe to ignore
+    });
 }

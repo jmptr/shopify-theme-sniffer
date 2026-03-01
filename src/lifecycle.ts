@@ -61,9 +61,7 @@ export function scheduleOfflineRetry(storefrontId: string): void {
  * alarms. When the alarm fires it probes the storefront with a HEAD request;
  * on success it invokes `onOnlineResume`, on failure it reschedules.
  */
-export function setupAlarmListener(
-  onOnlineResume: (storefrontId: string) => void,
-): void {
+export function setupAlarmListener(onOnlineResume: (storefrontId: string) => void): void {
   chrome.alarms.onAlarm.addListener(async (alarm) => {
     if (!alarm.name.startsWith(OFFLINE_ALARM_PREFIX)) return;
 
@@ -99,9 +97,7 @@ export function setupAlarmListener(
  * `/products.json` and inspecting the response status and final URL.
  * Returns `true` if the store appears to be behind a password gate.
  */
-export async function isStorePasswordProtected(
-  storefrontId: string,
-): Promise<boolean> {
+export async function isStorePasswordProtected(storefrontId: string): Promise<boolean> {
   try {
     const response = await fetch(`https://${storefrontId}/products.json`, {
       redirect: 'follow',

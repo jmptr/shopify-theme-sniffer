@@ -49,10 +49,7 @@ function LogsApp() {
   // ---- Load data on mount ----
   useEffect(() => {
     async function load() {
-      const [storefronts, logs] = await Promise.all([
-        getAllStorefronts(),
-        getAllLogs(),
-      ]);
+      const [storefronts, logs] = await Promise.all([getAllStorefronts(), getAllLogs()]);
       setStorefrontMap(new Map(storefronts.map((sf) => [sf.id, sf])));
       setAllLogs(logs);
     }
@@ -79,16 +76,12 @@ function LogsApp() {
   }, [allLogs, sfId, level, dateFrom, dateTo]);
 
   // ---- Storefronts list for dropdown ----
-  const storefronts = useMemo(
-    () => Array.from(storefrontMap.values()),
-    [storefrontMap],
-  );
+  const storefronts = useMemo(() => Array.from(storefrontMap.values()), [storefrontMap]);
 
   // ---- Resolve storefront domain ----
   const resolveDomain = useCallback(
-    (storefrontId: string): string =>
-      storefrontMap.get(storefrontId)?.domain ?? storefrontId,
-    [storefrontMap],
+    (storefrontId: string): string => storefrontMap.get(storefrontId)?.domain ?? storefrontId,
+    [storefrontMap]
   );
 
   // ---- Toggle expanded row ----
@@ -124,22 +117,15 @@ function LogsApp() {
   }, [sfId]);
 
   // ---- Clear confirmation message ----
-  const clearMessage = sfId
-    ? `Clear logs for ${resolveDomain(sfId)}?`
-    : 'Clear all logs?';
+  const clearMessage = sfId ? `Clear logs for ${resolveDomain(sfId)}?` : 'Clear all logs?';
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Header */}
       <header className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-gray-900">
-          Shopify Theme Sniffer — Logs
-        </h1>
+        <h1 className="text-xl font-semibold text-gray-900">Shopify Theme Sniffer — Logs</h1>
         <nav>
-          <a
-            href="../dashboard/dashboard.html"
-            className="text-blue-600 hover:underline text-sm"
-          >
+          <a href="../dashboard/dashboard.html" className="text-blue-600 hover:underline text-sm">
             Dashboard
           </a>
         </nav>
@@ -213,9 +199,7 @@ function LogsApp() {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={() => void handleClearLogs()}>
-                Clear
-              </AlertDialogAction>
+              <AlertDialogAction onClick={() => void handleClearLogs()}>Clear</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
@@ -226,10 +210,7 @@ function LogsApp() {
         {filteredLogs.length === 0 ? (
           <EmptyState message="No log entries found." />
         ) : (
-          <div
-            ref={parentRef}
-            style={{ height: 'calc(100vh - 200px)', overflow: 'auto' }}
-          >
+          <div ref={parentRef} style={{ height: 'calc(100vh - 200px)', overflow: 'auto' }}>
             <div
               style={{
                 height: `${virtualizer.getTotalSize()}px`,
@@ -239,8 +220,7 @@ function LogsApp() {
             >
               {virtualizer.getVirtualItems().map((virtualRow) => {
                 const log = filteredLogs[virtualRow.index];
-                const isExpanded =
-                  log.id !== undefined && expandedRows.has(log.id);
+                const isExpanded = log.id !== undefined && expandedRows.has(log.id);
                 const hasDetail = log.detail !== null;
 
                 return (
@@ -261,7 +241,7 @@ function LogsApp() {
                     <div
                       className={cn(
                         'flex items-center gap-2.5 h-12 px-2',
-                        hasDetail ? 'cursor-pointer' : '',
+                        hasDetail ? 'cursor-pointer' : ''
                       )}
                       onClick={(e) => {
                         if (!hasDetail || log.id === undefined) return;
@@ -276,7 +256,7 @@ function LogsApp() {
                         <span
                           className={cn(
                             'inline-block text-[10px] w-4 shrink-0 text-gray-400 transition-transform duration-150',
-                            isExpanded ? 'rotate-90' : '',
+                            isExpanded ? 'rotate-90' : ''
                           )}
                         >
                           {'\u25B6'}
@@ -292,7 +272,7 @@ function LogsApp() {
                       <span
                         className={cn(
                           'inline-block text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shrink-0 text-center min-w-[52px] text-white',
-                          levelColors[log.level],
+                          levelColors[log.level]
                         )}
                       >
                         {log.level.toUpperCase()}
@@ -308,7 +288,7 @@ function LogsApp() {
                         data-role="message"
                         className={cn(
                           'flex-1 text-sm whitespace-nowrap overflow-hidden text-ellipsis min-w-0',
-                          hasDetail ? 'cursor-text' : '',
+                          hasDetail ? 'cursor-text' : ''
                         )}
                       >
                         {log.message}

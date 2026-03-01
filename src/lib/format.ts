@@ -51,9 +51,7 @@ export function formatTimestamp(iso: string): string {
 export function priceRange(product: Product): string {
   if (product.variants.length === 0) return '\u2014';
 
-  const prices = product.variants
-    .map((v) => parseFloat(v.price))
-    .filter((p) => !isNaN(p));
+  const prices = product.variants.map((v) => parseFloat(v.price)).filter((p) => !isNaN(p));
 
   if (prices.length === 0) return '\u2014';
 
@@ -66,19 +64,23 @@ export function priceRange(product: Product): string {
 
 export function priceForSort(product: Product): number {
   if (product.variants.length === 0) return 0;
-  const prices = product.variants
-    .map((v) => parseFloat(v.price))
-    .filter((p) => !isNaN(p));
+  const prices = product.variants.map((v) => parseFloat(v.price)).filter((p) => !isNaN(p));
   return prices.length > 0 ? Math.min(...prices) : 0;
 }
 
 export function statusLabel(status: string): string {
   switch (status) {
-    case 'complete': return 'Complete';
-    case 'partial': return 'Partial';
-    case 'in-progress': return 'In Progress';
-    case 'paused': return 'Paused';
-    case 'never': return 'Never';
-    default: return status.charAt(0).toUpperCase() + status.slice(1);
+    case 'complete':
+      return 'Complete';
+    case 'partial':
+      return 'Partial';
+    case 'in-progress':
+      return 'In Progress';
+    case 'paused':
+      return 'Paused';
+    case 'never':
+      return 'Never';
+    default:
+      return status.charAt(0).toUpperCase() + status.slice(1);
   }
 }

@@ -10,7 +10,14 @@ interface SortableHeaderProps {
   className?: string;
 }
 
-export function SortableHeader({ column, label, sortColumn, sortDirection, onSort, className }: SortableHeaderProps) {
+export function SortableHeader({
+  column,
+  label,
+  sortColumn,
+  sortDirection,
+  onSort,
+  className,
+}: SortableHeaderProps) {
   const isActive = sortColumn === column;
 
   return (
