@@ -18,13 +18,17 @@ function detectShopify(): void {
         domain,
         shop,
       };
-      chrome.runtime.sendMessage(message);
+      chrome.runtime.sendMessage(message).catch(() => {
+        // Service worker not ready — safe to ignore
+      });
     } else {
       const message: ShopifyNotDetectedMessage = {
         type: 'SHOPIFY_NOT_DETECTED',
         domain,
       };
-      chrome.runtime.sendMessage(message);
+      chrome.runtime.sendMessage(message).catch(() => {
+        // Service worker not ready — safe to ignore
+      });
     }
   });
 }

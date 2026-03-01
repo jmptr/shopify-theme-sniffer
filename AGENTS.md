@@ -73,6 +73,7 @@ src/
 - Delete confirmations use shadcn `AlertDialog` (not `window.confirm()`)
 - All styling via Tailwind CSS utility classes — no per-page CSS files
 - Badge colors: green `#4CAF50` (detected), grey `#9E9E9E` (not detected)
+- MV3 messaging APIs return Promises — use `.catch()` (not `try/catch`) to handle "Receiving end does not exist" errors
 - `process.env.NODE_ENV` set to `"production"` in page bundles for MV3 CSP compliance (no `eval`)
 
 ## IndexedDB Schema (v1, database: `shopify-theme-sniffer`)

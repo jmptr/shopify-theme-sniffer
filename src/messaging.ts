@@ -183,14 +183,12 @@ export function broadcastProgress(
   fetched: number,
   estimated: number,
 ): void {
-  try {
-    chrome.runtime.sendMessage({
-      type: 'BACKUP_PROGRESS',
-      storefront_id: storefrontId,
-      fetched,
-      estimated,
-    });
-  } catch {
-    // No listeners available — safe to ignore
-  }
+  chrome.runtime.sendMessage({
+    type: 'BACKUP_PROGRESS',
+    storefront_id: storefrontId,
+    fetched,
+    estimated,
+  }).catch(() => {
+    // No listeners available (popup closed) — safe to ignore
+  });
 }
