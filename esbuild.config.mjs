@@ -2,11 +2,21 @@ import * as esbuild from 'esbuild';
 import { cpSync, mkdirSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const isWatch = process.argv.includes('--watch');
 
-/** Copy static assets (manifest, HTML, CSS, icons) into dist/. */
+/** Compile Tailwind CSS via PostCSS. */
+function buildCss() {
+  const input = resolve(__dirname, 'src/styles/global.css');
+  const output = resolve(__dirname, 'dist/styles/global.css');
+  mkdirSync(resolve(__dirname, 'dist/styles'), { recursive: true });
+  execSync(`npx postcss "${input}" -o "${output}"`, { stdio: 'inherit' });
+  console.log('[postcss] CSS compiled to dist/styles/global.css');
+}
+
+/** Copy static assets (manifest, HTML, icons) into dist/. */
 function copyStaticFiles() {
   const src = resolve(__dirname, 'src');
   const dist = resolve(__dirname, 'dist');
@@ -19,22 +29,18 @@ function copyStaticFiles() {
   // popup
   mkdirSync(resolve(dist, 'popup'), { recursive: true });
   cpSync(resolve(src, 'popup/popup.html'), resolve(dist, 'popup/popup.html'));
-  cpSync(resolve(src, 'popup/popup.css'), resolve(dist, 'popup/popup.css'));
 
   // dashboard
   mkdirSync(resolve(dist, 'dashboard'), { recursive: true });
   cpSync(resolve(src, 'dashboard/dashboard.html'), resolve(dist, 'dashboard/dashboard.html'));
-  cpSync(resolve(src, 'dashboard/dashboard.css'), resolve(dist, 'dashboard/dashboard.css'));
 
   // logs
   mkdirSync(resolve(dist, 'logs'), { recursive: true });
   cpSync(resolve(src, 'logs/logs.html'), resolve(dist, 'logs/logs.html'));
-  cpSync(resolve(src, 'logs/logs.css'), resolve(dist, 'logs/logs.css'));
 
   // products
   mkdirSync(resolve(dist, 'products'), { recursive: true });
   cpSync(resolve(src, 'products/products.html'), resolve(dist, 'products/products.html'));
-  cpSync(resolve(src, 'products/products.css'), resolve(dist, 'products/products.css'));
 
   // icons (copy entire directory)
   cpSync(resolve(src, 'icons'), resolve(dist, 'icons'), { recursive: true });
@@ -46,6 +52,7 @@ const copyPlugin = {
   setup(build) {
     build.onEnd(() => {
       copyStaticFiles();
+      buildCss();
       console.log('[copy-static] Static files copied to dist/');
     });
   },
@@ -57,6 +64,7 @@ const commonOptions = {
   target: 'chrome120',
   sourcemap: true,
   logLevel: 'info',
+  jsx: 'automatic',
 };
 
 // IIFE bundles (background + content scripts)
@@ -72,18 +80,21 @@ const iifeConfig = {
   plugins: [copyPlugin],
 };
 
-// IIFE bundles (popup, dashboard, logs)
+// IIFE bundles (popup, dashboard, logs, products)
 const pageConfig = {
   ...commonOptions,
   entryPoints: [
-    resolve(__dirname, 'src/popup/popup.ts'),
-    resolve(__dirname, 'src/dashboard/dashboard.ts'),
-    resolve(__dirname, 'src/logs/logs.ts'),
-    resolve(__dirname, 'src/products/products.ts'),
+    resolve(__dirname, 'src/popup/popup.tsx'),
+    resolve(__dirname, 'src/dashboard/dashboard.tsx'),
+    resolve(__dirname, 'src/logs/logs.tsx'),
+    resolve(__dirname, 'src/products/products.tsx'),
   ],
   outdir: resolve(__dirname, 'dist'),
   outbase: resolve(__dirname, 'src'),
   format: 'iife',
+  define: {
+    'process.env.NODE_ENV': '"production"',
+  },
 };
 
 async function main() {

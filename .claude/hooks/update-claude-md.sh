@@ -14,8 +14,8 @@ CHANGED=$(cd "$REPO" && {
 # Check if any meaningful code files changed
 CODE_CHANGED=$(echo "$CHANGED" | grep -E '^(src/|build\.mjs|esbuild|package\.json|tsconfig)' | head -1)
 
-# Check if CLAUDE.md was also changed
-CLAUDE_CHANGED=$(echo "$CHANGED" | grep -q 'CLAUDE\.md' && echo "yes")
+# Check if CLAUDE.md (or AGENTS.md, which CLAUDE.md symlinks to) was also changed
+CLAUDE_CHANGED=$(echo "$CHANGED" | grep -qE '(CLAUDE|AGENTS)\.md' && echo "yes")
 
 if [[ -n "$CODE_CHANGED" && -z "$CLAUDE_CHANGED" ]]; then
   echo "Source code was modified but CLAUDE.md was not updated. Review whether CLAUDE.md needs changes to reflect new/removed files, updated architecture, changed patterns, or modified configuration." >&2

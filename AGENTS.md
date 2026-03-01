@@ -4,11 +4,13 @@ Chrome Extension (Manifest V3) that detects Shopify storefronts and backs up the
 
 ## Tech Stack
 
-- **Language:** TypeScript (strict mode, ES2022 target)
-- **UI:** Vanilla HTML/CSS/JS (no framework)
+- **Language:** TypeScript (strict mode, ES2022 target, JSX via `react-jsx`)
+- **UI:** React 19 + shadcn/ui components + Tailwind CSS v4
+- **Component primitives:** Radix UI (AlertDialog, Checkbox, Collapsible, Progress, Select, Slot)
+- **Virtual scroll:** @tanstack/react-virtual (logs page)
 - **Storage:** IndexedDB via `idb` library
 - **API:** Shopify Storefront GraphQL API (public, no auth)
-- **Build:** esbuild with custom copy plugin
+- **Build:** esbuild (JSX automatic transform) + PostCSS/Tailwind
 - **Target:** Chrome 120+
 
 ## Commands
@@ -35,10 +37,18 @@ src/
 ├── messaging.ts        # Message routing, tab state tracking, badge management
 ├── backup.ts           # BackupEngine class — GraphQL pagination, rate limiting, pause/resume
 ├── lifecycle.ts        # Log pruning, offline recovery alarms, password detection
-├── popup/              # Extension popup (5 UI states)
-├── dashboard/          # Full-page storefront table with sort, delete, export
-├── products/           # Full-page product viewer with sort, search, pagination, expand details
-└── logs/               # Full-page log viewer with virtualized scrolling & filters
+├── styles/
+│   └── global.css      # Tailwind CSS entry point (@import "tailwindcss")
+├── lib/
+│   ├── utils.ts        # cn() helper (clsx + tailwind-merge)
+│   └── format.ts       # Shared formatters (formatRelativeTime, formatBytes, priceRange, etc.)
+├── components/
+│   ├── ui/             # shadcn/ui components (Button, Badge, Input, Progress, Table, AlertDialog, Checkbox)
+│   └── shared/         # App-specific shared components (StatusBadge, SortableHeader, EmptyState)
+├── popup/              # React popup (5 UI states, Chrome messaging via useEffect)
+├── dashboard/          # React storefront table with sort, AlertDialog delete, JSON export
+├── products/           # React product viewer with sort, search, pagination, expandable details
+└── logs/               # React log viewer with @tanstack/react-virtual & filters
 ```
 
 ## Architecture
@@ -54,10 +64,16 @@ src/
 - Service worker is the single source of truth for tab state and data access
 - All IndexedDB access goes through `db.ts` module functions
 - GraphQL responses transformed at boundary into Product records
-- Popup renders one of 5 states based on detection + backup status
-- Product viewer paginates results (default 10, configurable to 25/50/100)
-- Log viewer uses DOM virtualization for performance
+- **UI is React:** Each page (popup, dashboard, products, logs) is a separate React app with its own `ReactDOM.createRoot` entry point
+- **shadcn/ui components** live in `src/components/ui/` as copied source (not npm package); shared app components in `src/components/shared/`
+- **Shared utilities** in `src/lib/format.ts` — no duplicated formatters across pages
+- Popup renders one of 5 states based on detection + backup status; Chrome messaging via `useEffect` hooks
+- Product viewer uses 3 chained `useMemo` hooks: filter → sort → paginate (default 10, configurable to 25/50/100)
+- Log viewer uses `@tanstack/react-virtual` `useVirtualizer` for virtualized scrolling
+- Delete confirmations use shadcn `AlertDialog` (not `window.confirm()`)
+- All styling via Tailwind CSS utility classes — no per-page CSS files
 - Badge colors: green `#4CAF50` (detected), grey `#9E9E9E` (not detected)
+- `process.env.NODE_ENV` set to `"production"` in page bundles for MV3 CSP compliance (no `eval`)
 
 ## IndexedDB Schema (v1, database: `shopify-theme-sniffer`)
 
@@ -70,7 +86,7 @@ src/
 
 ## Build Output
 
-esbuild produces 7 IIFE bundles + copied static assets (HTML, CSS, icons, manifest) into `dist/`.
+esbuild produces 7 IIFE bundles (3 background/content + 4 page React apps) + PostCSS compiles Tailwind CSS to `dist/styles/global.css` + copies static assets (HTML, icons, manifest) into `dist/`. Each page bundle includes React independently (~720-850KB uncompressed, IIFE format).
 
 ## Configuration Locations
 
@@ -80,3 +96,8 @@ esbuild produces 7 IIFE bundles + copied static assets (HTML, CSS, icons, manife
 - Message types: `src/types.ts`
 - Log prune interval (30 days): `src/lifecycle.ts`
 - Offline retry delay (30s): `src/lifecycle.ts`
+- Tailwind config: `tailwind.config.ts`
+- PostCSS config: `postcss.config.mjs`
+- Build config (esbuild + PostCSS): `esbuild.config.mjs`
+- shadcn component source: `src/components/ui/`
+- Shared formatters: `src/lib/format.ts`

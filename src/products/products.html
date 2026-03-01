@@ -4,61 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Products — Shopify Theme Sniffer</title>
-  <link rel="stylesheet" href="products.css">
+  <link rel="stylesheet" href="../styles/global.css">
 </head>
 <body>
-  <header>
-    <div class="header-left">
-      <a href="../dashboard/dashboard.html" class="back-link">&larr; Dashboard</a>
-      <h1 id="page-title">Products</h1>
-    </div>
-  </header>
-  <div class="toolbar">
-    <input type="text" id="search-input" placeholder="Search products…">
-    <label class="toggle-removed">
-      <input type="checkbox" id="show-removed"> Show removed
-    </label>
-  </div>
-  <main>
-    <table id="product-table">
-      <thead>
-        <tr>
-          <th class="col-image">Image</th>
-          <th data-sortable data-column="title">Title</th>
-          <th data-sortable data-column="vendor">Vendor</th>
-          <th data-sortable data-column="product_type">Type</th>
-          <th data-sortable data-column="variants">Variants</th>
-          <th data-sortable data-column="price">Price</th>
-          <th data-sortable data-column="updated_at">Updated</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <div id="empty-state" class="empty-state" hidden>
-      No products found for this storefront.
-    </div>
-    <div id="pagination" class="pagination" hidden>
-      <div class="pagination-left">
-        <label class="page-size-label">
-          Show
-          <select id="page-size">
-            <option value="10" selected>10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-          per page
-        </label>
-      </div>
-      <div class="pagination-center">
-        <span id="page-info"></span>
-      </div>
-      <div class="pagination-right">
-        <button id="prev-page" disabled>&larr; Prev</button>
-        <button id="next-page">Next &rarr;</button>
-      </div>
-    </div>
-  </main>
+  <div id="root"></div>
   <script src="products.js"></script>
 </body>
 </html>

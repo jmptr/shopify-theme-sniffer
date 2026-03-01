@@ -4,33 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shopify Theme Sniffer — Dashboard</title>
-  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="../styles/global.css">
 </head>
 <body>
-  <header>
-    <h1>Shopify Theme Sniffer — Dashboard</h1>
-    <nav>
-      <a href="../logs/logs.html">View Logs</a>
-    </nav>
-  </header>
-  <main>
-    <table id="storefront-table">
-      <thead>
-        <tr>
-          <th data-sortable data-column="domain">Domain</th>
-          <th data-sortable data-column="products">Products</th>
-          <th data-sortable data-column="status">Status</th>
-          <th data-sortable data-column="last_backup">Last Backup</th>
-          <th data-sortable data-column="size">Size</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <div id="empty-state" class="empty-state" hidden>
-      No storefronts backed up yet. Browse to a Shopify store and start a backup from the extension popup.
-    </div>
-  </main>
+  <div id="root"></div>
   <script src="dashboard.js"></script>
 </body>
 </html>

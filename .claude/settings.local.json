@@ -7,7 +7,16 @@
       "Bash(npm run build)",
       "Bash(npx tsc --noEmit)",
       "Bash(git -C /c/Users/jm/Documents/GitHub/shopify-theme-sniffer log --oneline --all)",
-      "Bash(wc -l /c/Users/jm/Documents/GitHub/shopify-theme-sniffer/src/**/*.ts)"
+      "Bash(wc -l /c/Users/jm/Documents/GitHub/shopify-theme-sniffer/src/**/*.ts)",
+      "Bash(npm install react react-dom @tanstack/react-virtual clsx tailwind-merge)",
+      "Bash(npm install -D @types/react @types/react-dom tailwindcss @tailwindcss/postcss postcss autoprefixer)",
+      "mcp__plugin_context7_context7__resolve-library-id",
+      "mcp__plugin_context7_context7__query-docs",
+      "Bash(npm install @radix-ui/react-alert-dialog @radix-ui/react-checkbox @radix-ui/react-collapsible @radix-ui/react-select @radix-ui/react-progress @radix-ui/react-slot)",
+      "Bash(npm install -D postcss-cli)",
+      "Bash(npm run clean)",
+      "Bash(ls src/popup/*.css src/dashboard/*.css src/products/*.css src/logs/*.css)",
+      "Bash(ls src/popup/*.ts src/dashboard/*.ts src/products/*.ts src/logs/*.ts)"
     ]
   }
 }
