@@ -11,6 +11,7 @@ Chrome Extension (Manifest V3) that detects Shopify storefronts and backs up the
 - **Storage:** IndexedDB via `idb` library
 - **API:** Shopify Storefront GraphQL API (public, no auth)
 - **Build:** esbuild (JSX automatic transform) + PostCSS/Tailwind
+- **Linting:** ESLint + Prettier
 - **Target:** Chrome 120+
 
 ## Commands
@@ -20,6 +21,9 @@ npm install        # Install dependencies
 npm run build      # Build extension to dist/
 npm run watch      # Build + watch for changes
 npm run clean      # Remove dist/
+npm run lint       # Lint source files
+npm run lint:fix   # Lint and fix issues
+npm run format     # Format source files
 ```
 
 No test framework is configured. Load `dist/` as unpacked extension in Chrome for manual testing.
@@ -48,7 +52,11 @@ src/
 ├── popup/              # React popup (5 UI states, Chrome messaging via useEffect)
 ├── dashboard/          # React storefront table with sort, AlertDialog delete, JSON export
 ├── products/           # React product viewer with sort, search, pagination, expandable details
-└── logs/               # React log viewer with @tanstack/react-virtual & filters
+├── logs/               # React log viewer with @tanstack/react-virtual & filters
+└── icons/              # Extension icons
+.opencode/
+├── package.json        # Plugin dependencies (@opencode-ai/plugin)
+└── plugins/            # OpenCode plugins (lint-and-format.ts, agents-updater.ts)
 ```
 
 ## Architecture
@@ -89,6 +97,20 @@ src/
 
 esbuild produces 7 IIFE bundles (3 background/content + 4 page React apps) + PostCSS compiles Tailwind CSS to `dist/styles/global.css` + copies static assets (HTML, icons, manifest) into `dist/`. Each page bundle includes React independently (~720-850KB uncompressed, IIFE format).
 
+## OpenCode Plugins
+
+- `.opencode/plugins/lint-and-format.ts` - Auto-formats and lints on file edit
+- `.opencode/plugins/agents-updater.ts` - Suggests updating AGENTS.md when code changes
+
+## Extension Permissions
+
+- `storage` - Store extension state
+- `unlimitedStorage` - Store large IndexedDB data
+- `notifications` - Show notifications
+- `tabs` - Access tab information
+- `alarms` - Schedule background tasks
+- Host permission: `https://*/*` - Access all HTTPS sites for Shopify detection
+
 ## Configuration Locations
 
 - Extension permissions: `src/manifest.json`
@@ -102,3 +124,4 @@ esbuild produces 7 IIFE bundles (3 background/content + 4 page React apps) + Pos
 - Build config (esbuild + PostCSS): `esbuild.config.mjs`
 - shadcn component source: `src/components/ui/`
 - Shared formatters: `src/lib/format.ts`
+- OpenCode plugins: `.opencode/plugins/`
