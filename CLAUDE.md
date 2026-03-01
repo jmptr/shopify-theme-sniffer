@@ -37,7 +37,7 @@ src/
 ├── lifecycle.ts        # Log pruning, offline recovery alarms, password detection
 ├── popup/              # Extension popup (5 UI states)
 ├── dashboard/          # Full-page storefront table with sort, delete, export
-├── products/           # Full-page product viewer with sort, search, expand details
+├── products/           # Full-page product viewer with sort, search, pagination, expand details
 └── logs/               # Full-page log viewer with virtualized scrolling & filters
 ```
 
@@ -55,6 +55,7 @@ src/
 - All IndexedDB access goes through `db.ts` module functions
 - GraphQL responses transformed at boundary into Product records
 - Popup renders one of 5 states based on detection + backup status
+- Product viewer paginates results (default 10, configurable to 25/50/100)
 - Log viewer uses DOM virtualization for performance
 - Badge colors: green `#4CAF50` (detected), grey `#9E9E9E` (not detected)
 

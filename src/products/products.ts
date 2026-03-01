@@ -22,6 +22,8 @@ let sortState: SortState = { column: 'title', direction: 'asc' };
 let searchQuery = '';
 let showRemoved = false;
 let expandedIds = new Set<string>();
+let pageSize = 10;
+let currentPage = 1;
 
 // ---------------------------------------------------------------------------
 // DOM references
@@ -193,11 +195,13 @@ function renderTable(): void {
   const tbody = getTbody();
   const emptyState = getEmptyState();
   const table = getTable();
+  const pagination = document.getElementById('pagination') as HTMLDivElement;
   const filtered = getFilteredProducts();
 
   if (filtered.length === 0) {
     table.hidden = true;
     emptyState.hidden = false;
+    pagination.hidden = true;
     return;
   }
 
@@ -207,14 +211,29 @@ function renderTable(): void {
   const sorted = sortProducts(filtered);
   updateSortIndicators();
 
+  const totalPages = Math.ceil(sorted.length / pageSize);
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  const start = (currentPage - 1) * pageSize;
+  const pageItems = sorted.slice(start, start + pageSize);
+
   const rows: string[] = [];
-  for (const p of sorted) {
+  for (const p of pageItems) {
     rows.push(renderProductRow(p));
     if (expandedIds.has(p.id)) {
       rows.push(renderDetailRow(p));
     }
   }
   tbody.innerHTML = rows.join('');
+
+  // Update pagination controls
+  const end = Math.min(start + pageSize, sorted.length);
+  (document.getElementById('page-info') as HTMLSpanElement).textContent =
+    `${start + 1}–${end} of ${sorted.length}`;
+  (document.getElementById('prev-page') as HTMLButtonElement).disabled = currentPage <= 1;
+  (document.getElementById('next-page') as HTMLButtonElement).disabled = currentPage >= totalPages;
+  pagination.hidden = false;
 }
 
 function renderProductRow(p: Product): string {
@@ -305,6 +324,7 @@ function handleHeaderClick(e: MouseEvent): void {
     sortState.direction = 'asc';
   }
 
+  currentPage = 1;
   renderTable();
 }
 
@@ -330,12 +350,14 @@ function handleBodyClick(e: MouseEvent): void {
 function handleSearchInput(): void {
   const input = document.getElementById('search-input') as HTMLInputElement;
   searchQuery = input.value.trim();
+  currentPage = 1;
   renderTable();
 }
 
 function handleShowRemovedToggle(): void {
   const checkbox = document.getElementById('show-removed') as HTMLInputElement;
   showRemoved = checkbox.checked;
+  currentPage = 1;
   renderTable();
 }
 
@@ -371,6 +393,19 @@ async function init(): Promise<void> {
 
   document.getElementById('search-input')!.addEventListener('input', handleSearchInput);
   document.getElementById('show-removed')!.addEventListener('change', handleShowRemovedToggle);
+
+  document.getElementById('page-size')!.addEventListener('change', (e) => {
+    pageSize = parseInt((e.target as HTMLSelectElement).value, 10);
+    currentPage = 1;
+    renderTable();
+  });
+  document.getElementById('prev-page')!.addEventListener('click', () => {
+    if (currentPage > 1) { currentPage--; renderTable(); }
+  });
+  document.getElementById('next-page')!.addEventListener('click', () => {
+    currentPage++;
+    renderTable();
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
