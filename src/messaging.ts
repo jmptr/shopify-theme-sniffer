@@ -32,8 +32,9 @@ chrome.tabs.onRemoved.addListener((tabId: number) => {
 
 export function setBadgeForTab(tabId: number, detected: boolean): void {
   const color = detected ? '#4CAF50' : '#9E9E9E';
+  const text = detected ? '!' : '';
   chrome.action.setBadgeBackgroundColor({ color, tabId });
-  chrome.action.setBadgeText({ text: '', tabId });
+  chrome.action.setBadgeText({ text, tabId });
 }
 
 // ---------------------------------------------------------------------------
