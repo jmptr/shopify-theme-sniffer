@@ -37,30 +37,30 @@ interface SortState {
 
 function VariantTable({ variants }: { variants: ProductVariant[] }) {
   if (variants.length === 0) {
-    return <p className="text-gray-400 text-[13px]">No variants</p>;
+    return <p className="text-muted-foreground text-[13px]">No variants</p>;
   }
 
   return (
-    <table className="w-full border-collapse text-[13px] bg-white rounded overflow-hidden">
+    <table className="w-full border-collapse text-[13px] bg-card rounded overflow-hidden">
       <thead>
         <tr>
-          <th className="px-2.5 py-1.5 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500 bg-gray-100 border-b border-gray-200">
+          <th className="px-2.5 py-1.5 text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground bg-muted border-b border-border">
             Title
           </th>
-          <th className="px-2.5 py-1.5 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500 bg-gray-100 border-b border-gray-200">
+          <th className="px-2.5 py-1.5 text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground bg-muted border-b border-border">
             SKU
           </th>
-          <th className="px-2.5 py-1.5 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500 bg-gray-100 border-b border-gray-200">
+          <th className="px-2.5 py-1.5 text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground bg-muted border-b border-border">
             Price
           </th>
-          <th className="px-2.5 py-1.5 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500 bg-gray-100 border-b border-gray-200">
+          <th className="px-2.5 py-1.5 text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground bg-muted border-b border-border">
             Compare At
           </th>
         </tr>
       </thead>
       <tbody>
         {variants.map((v) => (
-          <tr key={v.id} className="border-b border-gray-100">
+          <tr key={v.id} className="border-b border-border">
             <td className="px-2.5 py-1.5">{v.title}</td>
             <td className="px-2.5 py-1.5">{v.sku}</td>
             <td className="px-2.5 py-1.5">${v.price}</td>
@@ -84,12 +84,9 @@ function TagList({ tags }: { tags: string[] }) {
   return (
     <div className="flex flex-wrap gap-1 mt-1">
       {tags.map((tag) => (
-        <span
-          key={tag}
-          className="inline-block px-2 py-0.5 rounded-full text-[11px] bg-gray-200 text-gray-700"
-        >
+        <Badge key={tag} variant="secondary">
           {tag}
-        </span>
+        </Badge>
       ))}
     </div>
   );
@@ -98,22 +95,24 @@ function TagList({ tags }: { tags: string[] }) {
 function DetailRow({ product }: { product: Product }) {
   return (
     <TableRow className="hover:bg-transparent">
-      <TableCell colSpan={7} className="p-0 px-3.5 pb-3.5 bg-gray-50 border-b-2 border-gray-200">
+      <TableCell colSpan={7} className="p-0 px-3.5 pb-3.5 bg-muted border-b-2 border-border">
         <div className="flex gap-6">
           <div className="flex-1 min-w-0">
-            <h3 className="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-2">
+            <h3 className="text-xs uppercase tracking-wide text-muted-foreground font-semibold mb-2">
               Variants
             </h3>
             <VariantTable variants={product.variants} />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-2">
+            <h3 className="text-xs uppercase tracking-wide text-muted-foreground font-semibold mb-2">
               Images
             </h3>
             <ImageGallery images={product.images} productTitle={product.title} />
+          </div>
+          <div className="flex-1 min-w-0">
             {product.tags.length > 0 && (
               <>
-                <h3 className="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-2 mt-3">
+                <h3 className="text-xs uppercase tracking-wide text-muted-foreground font-semibold mb-2">
                   Tags
                 </h3>
                 <TagList tags={product.tags} />
