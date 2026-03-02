@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { getAllStorefronts, deleteStorefront, getProductsByStorefront } from '../db';
 import type { Storefront, Product, BackupStatus } from '../types';
@@ -145,6 +145,8 @@ function DashboardApp() {
     direction: 'desc',
   });
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     getAllStorefronts().then(setStorefronts);
@@ -179,6 +181,31 @@ function DashboardApp() {
 
   const sorted = sortStorefronts(storefronts, sortState);
 
+  const { pageItems, totalPages, start, end } = useMemo(() => {
+    const total = sorted.length;
+    const tp = Math.max(1, Math.ceil(total / pageSize));
+    const safePage = Math.min(currentPage, tp);
+    const s = (safePage - 1) * pageSize;
+    const e = Math.min(s + pageSize, total);
+    return {
+      pageItems: sorted.slice(s, e),
+      totalPages: tp,
+      start: s,
+      end: e,
+    };
+  }, [sorted, pageSize, currentPage]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  const handlePageSizeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPageSize(parseInt(e.target.value, 10));
+    setCurrentPage(1);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Header */}
@@ -198,102 +225,151 @@ function DashboardApp() {
       {storefronts.length === 0 ? (
         <EmptyState message="No storefronts detected yet. Visit a Shopify store to get started." />
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <SortableHeader
-                column="domain"
-                label="Domain"
-                sortColumn={sortState.column}
-                sortDirection={sortState.direction}
-                onSort={handleSort}
-              />
-              <SortableHeader
-                column="products"
-                label="Products"
-                sortColumn={sortState.column}
-                sortDirection={sortState.direction}
-                onSort={handleSort}
-              />
-              <SortableHeader
-                column="status"
-                label="Status"
-                sortColumn={sortState.column}
-                sortDirection={sortState.direction}
-                onSort={handleSort}
-              />
-              <SortableHeader
-                column="last_backup"
-                label="Last Backup"
-                sortColumn={sortState.column}
-                sortDirection={sortState.direction}
-                onSort={handleSort}
-              />
-              <SortableHeader
-                column="size"
-                label="Size"
-                sortColumn={sortState.column}
-                sortDirection={sortState.direction}
-                onSort={handleSort}
-              />
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sorted.map((sf) => (
-              <TableRow key={sf.id}>
-                <TableCell className="font-medium text-gray-900">{sf.domain}</TableCell>
-                <TableCell>
-                  <a
-                    href={`../products/products.html?storefront=${encodeURIComponent(sf.id)}`}
-                    className="text-blue-600 hover:text-blue-800 hover:underline"
-                  >
-                    {sf.product_count}
-                  </a>
-                </TableCell>
-                <TableCell>
-                  <StatusBadge status={sf.backup_status} />
-                </TableCell>
-                <TableCell title={formatAbsoluteTime(sf.last_backup_at)}>
-                  {formatRelativeTime(sf.last_backup_at)}
-                </TableCell>
-                <TableCell>{formatBytes(sf.size_bytes)}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => handleExport(sf)}>
-                      Export JSON
-                    </Button>
-
-                    <AlertDialog
-                      open={pendingDeleteId === sf.id}
-                      onOpenChange={(open) => setPendingDeleteId(open ? sf.id : null)}
-                    >
-                      <AlertDialogTrigger asChild>
-                        <Button variant="destructive" size="sm">
-                          Delete
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Storefront</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Delete all data for <strong>{sf.domain}</strong>? This cannot be undone.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => void handleDelete(sf.id)}>
-                            Confirm Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                </TableCell>
+        <>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <SortableHeader
+                  column="domain"
+                  label="Domain"
+                  sortColumn={sortState.column}
+                  sortDirection={sortState.direction}
+                  onSort={handleSort}
+                />
+                <SortableHeader
+                  column="products"
+                  label="Products"
+                  sortColumn={sortState.column}
+                  sortDirection={sortState.direction}
+                  onSort={handleSort}
+                />
+                <SortableHeader
+                  column="status"
+                  label="Status"
+                  sortColumn={sortState.column}
+                  sortDirection={sortState.direction}
+                  onSort={handleSort}
+                />
+                <SortableHeader
+                  column="last_backup"
+                  label="Last Backup"
+                  sortColumn={sortState.column}
+                  sortDirection={sortState.direction}
+                  onSort={handleSort}
+                />
+                <SortableHeader
+                  column="size"
+                  label="Size"
+                  sortColumn={sortState.column}
+                  sortDirection={sortState.direction}
+                  onSort={handleSort}
+                />
+                <TableHead>Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {pageItems.map((sf) => (
+                <TableRow key={sf.id}>
+                  <TableCell className="font-medium text-gray-900">{sf.domain}</TableCell>
+                  <TableCell>
+                    <a
+                      href={`../products/products.html?storefront=${encodeURIComponent(sf.id)}`}
+                      className="text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                      {sf.product_count}
+                    </a>
+                  </TableCell>
+                  <TableCell>
+                    <StatusBadge status={sf.backup_status} />
+                  </TableCell>
+                  <TableCell title={formatAbsoluteTime(sf.last_backup_at)}>
+                    {formatRelativeTime(sf.last_backup_at)}
+                  </TableCell>
+                  <TableCell>{formatBytes(sf.size_bytes)}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm" asChild>
+                        <a href={`https://${sf.domain}`} target="_blank" rel="noopener noreferrer">
+                          Visit
+                        </a>
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => handleExport(sf)}>
+                        Export JSON
+                      </Button>
+
+                      <AlertDialog
+                        open={pendingDeleteId === sf.id}
+                        onOpenChange={(open) => setPendingDeleteId(open ? sf.id : null)}
+                      >
+                        <AlertDialogTrigger asChild>
+                          <Button variant="destructive" size="sm">
+                            Delete
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Storefront</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Delete all data for <strong>{sf.domain}</strong>? This cannot be
+                              undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => void handleDelete(sf.id)}>
+                              Confirm Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+
+          {/* Pagination */}
+          <div className="flex items-center justify-between mt-3 px-3.5 py-2.5 bg-white rounded-md text-[13px] text-gray-600">
+            <div className="flex items-center gap-1.5">
+              <span>Show</span>
+              <select
+                value={pageSize}
+                onChange={handlePageSizeChange}
+                className="px-1.5 py-1 text-[13px] border border-gray-300 rounded bg-white"
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+              <span>per page</span>
+            </div>
+            <span>
+              {storefronts.length > 0
+                ? `${start + 1}\u2013${end} of ${storefronts.length}`
+                : '0 of 0'}
+            </span>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage <= 1}
+                onClick={() => setCurrentPage((p) => p - 1)}
+              >
+                Prev
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage >= totalPages}
+                onClick={() => setCurrentPage((p) => p + 1)}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

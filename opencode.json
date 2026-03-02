@@ -5,5 +5,14 @@
       "type": "remote",
       "url": "https://mcp.context7.com/mcp"
     }
+  },
+  "permission": {
+    "bash": {
+      "*": "ask",
+      "git *": "allow",
+      "npm *": "allow",
+      "rm *": "deny",
+      "grep *": "allow"
+    }
   }
 }
