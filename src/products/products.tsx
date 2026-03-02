@@ -17,6 +17,7 @@ import {
 } from '../components/ui/table';
 import { SortableHeader } from '../components/shared/SortableHeader';
 import { EmptyState } from '../components/shared/EmptyState';
+import { ProductImageCarousel } from '../components/shared/ProductImageCarousel';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -74,22 +75,7 @@ function VariantTable({ variants }: { variants: ProductVariant[] }) {
 }
 
 function ImageGallery({ images, productTitle }: { images: ProductImage[]; productTitle: string }) {
-  if (images.length === 0) {
-    return <p className="text-gray-400 text-[13px]">No images</p>;
-  }
-
-  return (
-    <div className="flex gap-2 flex-wrap">
-      {images.map((img, i) => (
-        <img
-          key={i}
-          src={img.url}
-          alt={img.alt ?? productTitle}
-          className="w-20 h-20 object-cover rounded border border-gray-200"
-        />
-      ))}
-    </div>
-  );
+  return <ProductImageCarousel images={images} productTitle={productTitle} />;
 }
 
 function TagList({ tags }: { tags: string[] }) {
